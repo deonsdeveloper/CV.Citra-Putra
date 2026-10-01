@@ -1,0 +1,6 @@
+# Robots.txt for CV. Citra Putra Mandiri
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://citraputramandiri.co.id/sitemap.xml
