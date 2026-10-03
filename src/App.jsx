@@ -34,9 +34,22 @@ export default function App() {
       }
     };
 
+    const enableFullReveal = () => {
+      document.documentElement.classList.add('reveal-all');
+      document.querySelectorAll('.reveal, .bca-reveal').forEach((el) => {
+        el.classList.add('is-visible');
+      });
+    };
+
+    // Fallback: Enable full page reveal after 1.8s or when printing/capturing
+    const screenshotTimer = setTimeout(enableFullReveal, 1800);
+
+    window.addEventListener('beforeprint', enableFullReveal);
     window.addEventListener('hashchange', handleHashChange);
     window.addEventListener('scroll', handleScroll);
     return () => {
+      clearTimeout(screenshotTimer);
+      window.removeEventListener('beforeprint', enableFullReveal);
       window.removeEventListener('hashchange', handleHashChange);
       window.removeEventListener('scroll', handleScroll);
     };
