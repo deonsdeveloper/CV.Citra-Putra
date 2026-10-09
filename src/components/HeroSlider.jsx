@@ -55,14 +55,14 @@ export default function HeroSlider({ onNavigate }) {
     if (isAnimating) return;
     setIsAnimating(true);
     setCurrentSlide((prev) => (prev + 1) % slides.length);
-    setTimeout(() => setIsAnimating(false), 800);
+    setTimeout(() => setIsAnimating(false), 600);
   }, [isAnimating, slides.length]);
 
   const goToPrevSlide = useCallback(() => {
     if (isAnimating) return;
     setIsAnimating(true);
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-    setTimeout(() => setIsAnimating(false), 800);
+    setTimeout(() => setIsAnimating(false), 600);
   }, [isAnimating, slides.length]);
 
   // Auto-play timer (6 seconds)
@@ -83,57 +83,45 @@ export default function HeroSlider({ onNavigate }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [goToNextSlide, goToPrevSlide]);
 
-
+  const activeSlide = slides[currentSlide];
 
   return (
     <div
       id="hero"
       className="relative w-full h-[100vh] min-h-[520px] max-h-[850px] overflow-hidden bg-navy-900 text-white select-none"
     >
-      {/* Slides Stack */}
-      {slides.map((slide, index) => {
-        const isActive = index === currentSlide;
-        return (
-          <div
-            key={slide.id}
-            className={`absolute inset-0 max-h-[850px] transition-opacity duration-1000 ease-in-out ${
-              isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
-            }`}
-          >
-            {/* Background Image (Static object-cover img tag without continuous GPU scale animation so WebKit Full-Page screenshot captures it reliably) */}
-            <img
-              src={slide.bgImage}
-              alt={slide.title || 'Hero Background'}
-              loading={index === 0 ? 'eager' : 'lazy'}
-              decoding={index === 0 ? 'sync' : 'async'}
-              className="absolute inset-0 w-full h-full object-cover max-h-[850px] pointer-events-none"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
+      {/* Direct Background Image (Always 100% visible to WebKit Full-Page screenshot & normal view) */}
+      <img
+        key={activeSlide.bgImage}
+        src={activeSlide.bgImage}
+        alt={activeSlide.title || 'Hero Background'}
+        loading="eager"
+        decoding="sync"
+        className="absolute inset-0 w-full h-full object-cover max-h-[850px] z-0 pointer-events-none transition-opacity duration-700"
+        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+      />
 
-            {/* Subtle Gradient Overlays for optimal text contrast & vibrant background image */}
-            <div className="absolute inset-0 max-h-[850px] bg-gradient-to-b from-slate-950/50 via-slate-900/20 to-slate-950/70 pointer-events-none" />
-            <div className="absolute inset-0 max-h-[850px] bg-radial-vignette opacity-20 pointer-events-none" />
+      {/* Dark Overlay Gradient for optimal text readability */}
+      <div className="absolute inset-0 max-h-[850px] bg-gradient-to-b from-slate-950/60 via-slate-900/30 to-slate-950/80 z-1 pointer-events-none" />
+      <div className="absolute inset-0 max-h-[850px] bg-radial-vignette opacity-20 z-1 pointer-events-none" />
 
-            {/* Slide Content Container */}
-            <div className="relative h-full max-h-[850px] max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center items-center text-center py-16 sm:py-20 lg:py-24">
-              <div
-                className={`max-w-4xl space-y-4 sm:space-y-6 transition-all duration-1000 transform ${isActive ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-                  }`}
-              >
-                {/* H1 Title - Editorial Playfair Display */}
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-serif leading-[1.15] text-white drop-shadow-md px-2">
-                  {slide.title}
-                </h1>
+      {/* Slide Content Container */}
+      <div className="relative z-10 h-full max-h-[850px] max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center items-center text-center py-16 sm:py-20 lg:py-24">
+        <div
+          key={activeSlide.id}
+          className="max-w-4xl space-y-4 sm:space-y-6 transition-all duration-700 animate-slide-up-fade"
+        >
+          {/* H1 Title - Editorial Playfair Display */}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-serif leading-[1.15] text-white drop-shadow-md px-2">
+            {activeSlide.title}
+          </h1>
 
-                {/* Subheadline - Inter */}
-                <p className="text-sm sm:text-base md:text-lg lg:text-xl text-slate-200 font-sans max-w-2xl mx-auto font-light leading-relaxed drop-shadow px-2">
-                  {slide.subtitle}
-                </p>
-              </div>
-            </div>
-          </div>
-        );
-      })}
+          {/* Subheadline - Inter */}
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-slate-200 font-sans max-w-2xl mx-auto font-light leading-relaxed drop-shadow px-2">
+            {activeSlide.subtitle}
+          </p>
+        </div>
+      </div>
 
       {/* Unified Bottom Controls: Dot Indicators & Explore More Button */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2">
