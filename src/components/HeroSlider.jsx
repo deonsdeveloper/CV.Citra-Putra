@@ -88,9 +88,9 @@ export default function HeroSlider({ onNavigate }) {
   return (
     <div
       id="hero"
-      className="relative w-full h-[100vh] min-h-[520px] max-h-[850px] overflow-hidden bg-navy-900 text-white select-none"
+      className="relative w-full h-[100vh] min-h-[520px] max-h-[850px] overflow-hidden text-white select-none bg-slate-900"
     >
-      {/* Direct Background Image (Always 100% visible to WebKit Full-Page screenshot & normal view) */}
+      {/* Real Industrial Factory Image - 100% visible, vibrant, no heavy dark tint */}
       <img
         key={activeSlide.bgImage}
         src={activeSlide.bgImage}
@@ -101,23 +101,22 @@ export default function HeroSlider({ onNavigate }) {
         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
       />
 
-      {/* Dark Overlay Gradient for optimal text readability */}
-      <div className="absolute inset-0 max-h-[850px] bg-gradient-to-b from-slate-950/60 via-slate-900/30 to-slate-950/80 z-1 pointer-events-none" />
-      <div className="absolute inset-0 max-h-[850px] bg-radial-vignette opacity-20 z-1 pointer-events-none" />
+      {/* Very light edge gradient to protect navbar and control visibility without hiding the real image */}
+      <div className="absolute inset-0 max-h-[850px] bg-gradient-to-b from-black/40 via-transparent to-black/50 z-1 pointer-events-none" />
 
       {/* Slide Content Container */}
       <div className="relative z-10 h-full max-h-[850px] max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center items-center text-center py-16 sm:py-20 lg:py-24">
         <div
           key={activeSlide.id}
-          className="max-w-4xl space-y-4 sm:space-y-6 transition-all duration-700 animate-slide-up-fade"
+          className="max-w-4xl space-y-4 sm:space-y-6 bg-black/35 backdrop-blur-[2px] p-5 sm:p-8 md:p-10 rounded-3xl border border-white/10 shadow-2xl transition-all duration-700 animate-slide-up-fade"
         >
           {/* H1 Title - Editorial Playfair Display */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-serif leading-[1.15] text-white drop-shadow-md px-2">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-serif leading-[1.15] text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] px-2">
             {activeSlide.title}
           </h1>
 
           {/* Subheadline - Inter */}
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-slate-200 font-sans max-w-2xl mx-auto font-light leading-relaxed drop-shadow px-2">
+          <p className="text-xs sm:text-base md:text-lg lg:text-xl text-slate-100 font-sans max-w-2xl mx-auto font-normal leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] px-2">
             {activeSlide.subtitle}
           </p>
         </div>
@@ -134,7 +133,7 @@ export default function HeroSlider({ onNavigate }) {
               aria-label={`Ke slide ${idx + 1}`}
               className={`transition-all duration-500 rounded-full cursor-pointer ${idx === currentSlide
                 ? 'w-8 h-2.5 bg-teal-400 shadow-glow'
-                : 'w-2.5 h-2.5 bg-white/40 hover:bg-white/70'
+                : 'w-2.5 h-2.5 bg-white/60 hover:bg-white/90'
                 }`}
             />
           ))}

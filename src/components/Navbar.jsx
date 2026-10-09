@@ -167,7 +167,7 @@ export default function Navbar({ activePage, onNavigate }) {
       <header
         className={`fixed top-0 left-0 right-0 z-40 transition-colors duration-300 ease-in-out ${
           isTransparent
-            ? 'bg-gradient-to-b from-navy-950/85 via-navy-900/50 to-transparent text-white py-6 sm:py-7'
+            ? 'bg-gradient-to-b from-black/40 to-transparent text-white py-5 sm:py-6'
             : 'bg-white/95 backdrop-blur-md text-navy-900 shadow-sm border-b border-slate-100 py-3 sm:py-3.5'
         }`}
         onMouseLeave={handleMouseLeaveProducts}
