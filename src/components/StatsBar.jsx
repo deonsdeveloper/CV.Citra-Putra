@@ -93,15 +93,32 @@ export default function StatsBar() {
     const el = ref.current;
     if (!el) return;
 
+    if (!('IntersectionObserver' in window)) {
+      setInView(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setInView(entry.isIntersecting);
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.unobserve(entry.target);
+        }
       },
-      { threshold: 0.25 }
+      { threshold: 0.05, rootMargin: '0px 0px -5% 0px' }
     );
 
     observer.observe(el);
-    return () => observer.disconnect();
+
+    // Fallback timer for screenshot / slow observer triggers
+    const fallbackTimer = setTimeout(() => {
+      setInView(true);
+    }, 1800);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(fallbackTimer);
+    };
   }, []);
 
   return (

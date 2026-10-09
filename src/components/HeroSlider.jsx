@@ -86,29 +86,36 @@ export default function HeroSlider({ onNavigate }) {
 
 
   return (
-    <div id="hero" className="relative w-full h-[100svh] min-h-[100dvh] sm:h-screen overflow-hidden bg-navy-900 text-white select-none">
+    <div
+      id="hero"
+      className="relative w-full h-[100vh] min-h-[520px] max-h-[850px] overflow-hidden bg-navy-900 text-white select-none"
+    >
       {/* Slides Stack */}
       {slides.map((slide, index) => {
         const isActive = index === currentSlide;
         return (
           <div
             key={slide.id}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
-              }`}
+            className={`absolute inset-0 max-h-[850px] transition-opacity duration-1000 ease-in-out ${
+              isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+            }`}
           >
-            {/* Background Image with Ken Burns Zoom Effect */}
-            <div
-              className={`absolute inset-0 bg-cover bg-center transition-transform duration-[7000ms] ease-out ${isActive ? 'scale-105' : 'scale-100'
-                }`}
-              style={{ backgroundImage: `url('${slide.bgImage}')` }}
+            {/* Background Image (Static object-cover img tag without continuous GPU scale animation so WebKit Full-Page screenshot captures it reliably) */}
+            <img
+              src={slide.bgImage}
+              alt={slide.title || 'Hero Background'}
+              loading={index === 0 ? 'eager' : 'lazy'}
+              decoding={index === 0 ? 'sync' : 'async'}
+              className="absolute inset-0 w-full h-full object-cover max-h-[850px] pointer-events-none"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
 
-            {/* Gradient Overlays */}
-            <div className="absolute inset-0 bg-gradient-to-b from-navy-900/70 via-navy-900/40 to-navy-900/90" />
-            <div className="absolute inset-0 bg-radial-vignette opacity-40 pointer-events-none" />
+            {/* Subtle Gradient Overlays for optimal text contrast & vibrant background image */}
+            <div className="absolute inset-0 max-h-[850px] bg-gradient-to-b from-slate-950/50 via-slate-900/20 to-slate-950/70 pointer-events-none" />
+            <div className="absolute inset-0 max-h-[850px] bg-radial-vignette opacity-20 pointer-events-none" />
 
             {/* Slide Content Container */}
-            <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center items-center text-center pt-16 pb-24">
+            <div className="relative h-full max-h-[850px] max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center items-center text-center py-16 sm:py-20 lg:py-24">
               <div
                 className={`max-w-4xl space-y-4 sm:space-y-6 transition-all duration-1000 transform ${isActive ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
                   }`}
