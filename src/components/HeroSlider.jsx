@@ -51,6 +51,14 @@ export default function HeroSlider({ onNavigate }) {
     },
   ];
 
+  // Preload semua gambar slider ke cache browser agar langsung siap
+  useEffect(() => {
+    slides.forEach((slide) => {
+      const img = new Image();
+      img.src = slide.bgImage;
+    });
+  }, []);
+
   const goToNextSlide = useCallback(() => {
     if (isAnimating) return;
     setIsAnimating(true);
@@ -65,7 +73,7 @@ export default function HeroSlider({ onNavigate }) {
     setTimeout(() => setIsAnimating(false), 600);
   }, [isAnimating, slides.length]);
 
-  // Auto-play timer (6 seconds)
+  // Timer auto-slide 6 detik
   useEffect(() => {
     const timer = setInterval(() => {
       goToNextSlide();
@@ -73,7 +81,7 @@ export default function HeroSlider({ onNavigate }) {
     return () => clearInterval(timer);
   }, [goToNextSlide]);
 
-  // Keyboard arrow keys navigation
+  // Navigasi keyboard panah
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'ArrowLeft') goToPrevSlide();
@@ -86,45 +94,76 @@ export default function HeroSlider({ onNavigate }) {
   const activeSlide = slides[currentSlide];
 
   return (
-    <div
+    <section
       id="hero"
-      className="relative w-full h-[100vh] min-h-[520px] max-h-[850px] overflow-hidden text-white select-none bg-slate-900"
+      className="relative w-full h-[100vh] min-h-[520px] max-h-[820px] overflow-hidden text-white select-none bg-cover bg-center flex flex-col justify-center items-center"
+      style={{
+        backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.15) 50%, rgba(0, 0, 0, 0.5) 100%), url('${activeSlide.bgImage}')`,
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+      }}
     >
-      {/* Real Industrial Factory Image - 100% visible, vibrant, no heavy dark tint */}
-      <img
-        key={activeSlide.bgImage}
-        src={activeSlide.bgImage}
-        alt={activeSlide.title || 'Hero Background'}
-        loading="eager"
-        decoding="sync"
-        className="absolute inset-0 w-full h-full object-cover max-h-[850px] z-0 pointer-events-none transition-opacity duration-700"
-        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+      {/* Wrapper DOM Image eksplisit untuk menangani bug tangkapan layar full-page WebKit Safari iOS */}
+      <div 
+        className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none"
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', zIndex: 0 }}
+      >
+        <img
+          src={activeSlide.bgImage}
+          alt={activeSlide.title || "Hero Background"}
+          loading="eager"
+          decoding="sync"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            minWidth: '100%',
+            minHeight: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center',
+            display: 'block',
+          }}
+        />
+      </div>
+
+      {/* Lapisan gradient halus */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{ 
+          background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.1) 45%, rgba(0, 0, 0, 0.5) 100%)',
+          zIndex: 1 
+        }} 
       />
 
-      {/* Very light edge gradient to protect navbar and control visibility without hiding the real image */}
-      <div className="absolute inset-0 max-h-[850px] bg-gradient-to-b from-black/40 via-transparent to-black/50 z-1 pointer-events-none" />
-
-      {/* Slide Content Container */}
-      <div className="relative z-10 h-full max-h-[850px] max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center items-center text-center py-16 sm:py-20 lg:py-24">
+      {/* Konten Teks Langsung di atas foto (Tanpa kotak hitam / card box) */}
+      <div 
+        className="relative h-full max-h-[820px] max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center items-center text-center py-16 sm:py-20 lg:py-24"
+        style={{ zIndex: 10 }}
+      >
         <div
           key={activeSlide.id}
-          className="max-w-4xl space-y-4 sm:space-y-6 bg-black/35 backdrop-blur-[2px] p-5 sm:p-8 md:p-10 rounded-3xl border border-white/10 shadow-2xl transition-all duration-700 animate-slide-up-fade"
+          className="max-w-4xl space-y-4 sm:space-y-6 transition-all duration-700 animate-slide-up-fade"
         >
-          {/* H1 Title - Editorial Playfair Display */}
-          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-serif leading-[1.15] text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] px-2">
+          {/* Judul Utama */}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-serif leading-[1.15] text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] px-2">
             {activeSlide.title}
           </h1>
 
-          {/* Subheadline - Inter */}
-          <p className="text-xs sm:text-base md:text-lg lg:text-xl text-slate-100 font-sans max-w-2xl mx-auto font-normal leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] px-2">
+          {/* Subjudul */}
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-slate-100 font-sans max-w-2xl mx-auto font-normal leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] px-2">
             {activeSlide.subtitle}
           </p>
         </div>
       </div>
 
-      {/* Unified Bottom Controls: Dot Indicators & Explore More Button */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2">
-        {/* Dot Indicators */}
+      {/* Kontrol Bawah: Dots & Explore More */}
+      <div 
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        style={{ zIndex: 20 }}
+      >
         <div className="flex items-center gap-2.5">
           {slides.map((_, idx) => (
             <button
@@ -139,9 +178,8 @@ export default function HeroSlider({ onNavigate }) {
           ))}
         </div>
 
-        {/* Bouncing Explore More Indicator */}
         <ExploreMore targetId="about" />
       </div>
-    </div>
+    </section>
   );
 }
