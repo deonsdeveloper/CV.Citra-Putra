@@ -58,8 +58,8 @@ function useCountUp(target, duration = 1800) {
   return [count, ref];
 }
 
-// Reusable viewport observer hook for bidirectional scroll reveal
-function useInView(options = { threshold: 0.2, rootMargin: "-30px 0px" }) {
+// Reusable viewport observer hook for progressive reveal
+function useInView(options = { threshold: 0.05, rootMargin: "0px 0px -5% 0px" }) {
   const ref = useRef(null);
   const [isInView, setIsInView] = useState(false);
 
@@ -67,13 +67,29 @@ function useInView(options = { threshold: 0.2, rootMargin: "-30px 0px" }) {
     const el = ref.current;
     if (!el) return;
 
+    if (!('IntersectionObserver' in window)) {
+      setIsInView(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(([entry]) => {
-      // Dynamically toggle inView so text animations replay whenever scrolling back into view
-      setIsInView(entry.isIntersecting);
+      if (entry.isIntersecting) {
+        setIsInView(true);
+        observer.unobserve(entry.target);
+      }
     }, options);
 
     observer.observe(el);
-    return () => observer.disconnect();
+
+    // Fallback timer for screenshot / slow observer triggers
+    const fallbackTimer = setTimeout(() => {
+      setIsInView(true);
+    }, 1800);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(fallbackTimer);
+    };
   }, [options]);
 
   return [ref, isInView];
@@ -94,7 +110,8 @@ export default function About({ onNavigate }) {
     const handleScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
-          const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+          const vhCap = Math.min(window.innerHeight || 800, 850);
+          const totalHeight = document.documentElement.scrollHeight - vhCap;
           const currentProgress = totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
           setScrollProgress(Math.min(Math.max(currentProgress, 0), 100));
           setScrollY(window.scrollY);
@@ -109,18 +126,17 @@ export default function About({ onNavigate }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Section inView triggers for staggered text reveal (calibrated so sections start clean & empty)
-  const [whoRef, whoInView] = useInView({ threshold: 0.25, rootMargin: "-60px 0px" });
-  const [visionRef, visionInView] = useInView({ threshold: 0.2, rootMargin: "-40px 0px" });
-  const [journeyRef, journeyInView] = useInView({ threshold: 0.2, rootMargin: "-40px 0px" });
-  const [statementRef, statementInView] = useInView({ threshold: 0.2, rootMargin: "-40px 0px" });
-  const [whatRef, whatInView] = useInView({ threshold: 0.2, rootMargin: "-40px 0px" });
-  const [industriesRef, industriesInView] = useInView({ threshold: 0.2, rootMargin: "-40px 0px" });
-  const [valuesRef, valuesInView] = useInView({ threshold: 0.2, rootMargin: "-40px 0px" });
-  const [ctaRef, ctaInView] = useInView({ threshold: 0.2, rootMargin: "-40px 0px" });
+  // Section inView triggers for staggered text reveal
+  const [whoRef, whoInView] = useInView({ threshold: 0.05, rootMargin: "100px 0px" });
+  const [visionRef, visionInView] = useInView({ threshold: 0.05, rootMargin: "100px 0px" });
+  const [journeyRef, journeyInView] = useInView({ threshold: 0.05, rootMargin: "100px 0px" });
+  const [statementRef, statementInView] = useInView({ threshold: 0.05, rootMargin: "100px 0px" });
+  const [whatRef, whatInView] = useInView({ threshold: 0.05, rootMargin: "100px 0px" });
+  const [industriesRef, industriesInView] = useInView({ threshold: 0.05, rootMargin: "100px 0px" });
+  const [valuesRef, valuesInView] = useInView({ threshold: 0.05, rootMargin: "100px 0px" });
+  const [ctaRef, ctaInView] = useInView({ threshold: 0.05, rootMargin: "100px 0px" });
 
-  // Strictly require user to have scrolled down before activating Section 02
-  const isWhoActive = whoInView && scrollY > 70;
+  const isWhoActive = whoInView;
 
   // Animated Count-Up for Statistics
   const [stat1, stat1Ref] = useCountUp(15, 1400);

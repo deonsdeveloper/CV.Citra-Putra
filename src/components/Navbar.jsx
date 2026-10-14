@@ -153,16 +153,16 @@ export default function Navbar({ activePage, onNavigate }) {
   return (
     <>
       {/* Dimmed Apple-style backdrop blur overlay */}
-      <div
-        className={`fixed inset-0 top-0 bg-black/25 z-30 transition-all duration-300 ${
-          isProductsMenuOpen ? 'opacity-100 visible pointer-events-auto' : 'opacity-0 invisible pointer-events-none'
-        }`}
-        style={{
-          backdropFilter: isProductsMenuOpen ? 'blur(16px)' : 'none',
-          WebkitBackdropFilter: isProductsMenuOpen ? 'blur(16px)' : 'none',
-        }}
-        onClick={() => setIsProductsMenuOpen(false)}
-      />
+      {isProductsMenuOpen && (
+        <div
+          className="fixed inset-0 top-0 bg-black/25 z-30 transition-all duration-300 opacity-100 visible pointer-events-auto"
+          style={{
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+          }}
+          onClick={() => setIsProductsMenuOpen(false)}
+        />
+      )}
 
       <header
         className={`fixed top-0 left-0 right-0 z-40 transition-colors duration-300 ease-in-out ${

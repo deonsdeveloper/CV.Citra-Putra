@@ -4,3 +4,7 @@ dist/
 .env
 .env.local
 .vscode/
+*.zip
+UPLOAD_KE_GITHUB/
+vite.config.js.timestamp-*
+

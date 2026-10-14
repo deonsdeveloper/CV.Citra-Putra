@@ -228,6 +228,7 @@
 #hero {
   min-height: clamp(500px, 80svh, 780px) !important;
   max-height: 820px !important;
+  background-color: #0F172A !important;
 }
 
 @media (max-width: 640px) {
@@ -238,12 +239,41 @@
   }
 }
 
-/* Print Fallback Rules */
+/* Ensure Safari iOS WebKit Full-Page Screenshot & PDF preserves all colors and backgrounds */
+*, *::before, *::after {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* Print & Full-Page Screenshot Fallback Rules */
 @media print {
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  header.fixed {
+    position: absolute !important;
+  }
+  .fixed.bottom-6 {
+    display: none !important;
+  }
   #hero {
-    height: 480px !important;
-    max-height: 480px !important;
-    min-height: 480px !important;
+    height: 620px !important;
+    max-height: 620px !important;
+    min-height: 520px !important;
+    background-color: #0F172A !important;
+    background-size: cover !important;
+    background-position: center !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  #hero img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
   .reveal,
   .bca-reveal,
@@ -260,11 +290,13 @@
 
 /* Accessibility: Respect user's motion preference */
 @media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after, .reveal, .bca-reveal {
+  *, ::before, ::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  .reveal, .bca-reveal, [class*="bca-reveal"] {
     opacity: 1 !important;
     transform: none !important;
   }
@@ -368,16 +400,6 @@
   .animate-text-glow {
     animation: none !important;
   }
-}
-/* Safari Full-Page Screenshot & PDF Fix */
-*, *::before, *::after {
-  -webkit-print-color-adjust: exact !important;
-  print-color-adjust: exact !important;
-}
-
-#hero {
-  -webkit-print-color-adjust: exact !important;
-  print-color-adjust: exact !important;
 }
 
 
